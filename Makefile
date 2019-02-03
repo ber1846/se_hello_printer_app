@@ -10,7 +10,7 @@ test:
 docker_build:
 	docker build -t hello-world-printer .;
 docker_run: docker_build
-	docker_run \
-		-n hello-world-printer-dev \
+	docker run \
+		--name hello-world-printer-dev \
 		-p 5000:5000 \
 		-d hello_world_printer;
