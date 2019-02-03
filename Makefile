@@ -4,20 +4,30 @@ deps:
 lint:
 		flake8 hello_world test
 test:
-	import unittest
-	from hello_world import app
-	from hello_world.formater import SUPPORTED
+		class TestFormater(unittest.TestCase):
+				  def test_plain_lowercase(self):
+				      r = plain_text_upper_case("WWIMIE", "EEEMSG")
+				      name = r.split(" ")[0]
+				      msg = r.split(" ")[1]
+				      self.assertTrue(name.isupper())
+				      self.assertTrue(msg.isupper())
+run:
+		from hello_world import app
+		from formater import get_formatted
+		from formater import SUPPORTED, PLAIN
+		from flask import request
 
+		moje_imie = "Bernadeta"
+		msg = "Hello World!"
 
-	class FlaskrTestCase(unittest.TestCase):
-			def setUp(self):
-					app.config['TESTING'] = True
-					self.app = app.test_client()
+		@app.route('/')
+		def index():
+				output = request.args.get('output')
+				if not output:
+						output = PLAIN
+				return get_formatted(msg, moje_imie,
+														 output.lower())
 
-			def test_outputs(self):
-					rv = self.app.get('/outputs')
-					','.join(SUPPORTED) in rv.data
-
-			def test_msg_with_output(self):
-					rv = self.app.get('/?output=json')
-					self.assertEquals('{ "imie":"Bernadeta", "mgs":"Hello World!"}', rv.data)
+		@app.route('/outputs')
+		def supported_output():
+				return ", ".join(SUPPORTED)
